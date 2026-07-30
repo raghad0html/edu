@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  # يسمح لك بتشغيل البناء يدويًا من تبويب Actions
   workflow_dispatch:
 
 jobs:
@@ -15,33 +14,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. سحب الكود من المستودع
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة Java المطلوب لبناء الأندرويد
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. إعداد بيئة Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # يمكنك تحديد إصدار معين هنا إذا أردت، مثل: flutter-version: '3.22.0'
 
-      # 4. تحميل الحزم والمكتبات الخاصة بالمشروع
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
-      # 5. بناء تطبيق الـ APK (Release)
-      - name: Build APK
-        run: flutter build apk --release
+      # خطوة معالجة مشكلة الـ namespace للمكتبات القديمة مثل ar_flutter_plugin
+      - name: Fix AGP Namespace issue in ar_flutter_plugin
+        run: |
+          AR_PLUGIN_PATH=$(find /home/runner/.pub-cache -name "ar_flutter_plugin-*" -type d | head -n 1)
+          if [ -d "$AR_PLUGIN_PATH" ]; then
+            echo "Fixing namespace for $AR_PLUGIN_PATH"
+            sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
+          fi
 
-      # 6. رفع ملف الـ APK النامج كـ Artifact لتقوم بتحميله
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
