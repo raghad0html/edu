@@ -17,7 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. تثبيت Java 17
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
@@ -29,41 +28,36 @@ jobs:
         with:
           channel: 'stable'
 
-      # 2. إنشاء المجلد المفقود لضمان عدم توقف البناء
+      # 1. إنشاء المجلد المفقود
       - name: Ensure missing asset directory exists
         run: mkdir -p assets/images/search
 
       - name: Get dependencies
         run: flutter pub get
 
-      # 3. إضافة الـ namespace لمكتبة ar_flutter_plugin
-      - name: Fix ar_flutter_plugin namespace
+      # 2. تعديل جذري لملف build.gradle الخاص بمكتبة ar_flutter_plugin
+      - name: Directly Patch ar_flutter_plugin build.gradle
         run: |
-          AR_PLUGIN_PATH=$(find /home/runner/.pub-cache -name "ar_flutter_plugin-*" -type d | head -n 1)
-          if [ -d "$AR_PLUGIN_PATH" ]; then
-            echo "Fixing namespace for $AR_PLUGIN_PATH"
-            sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
+          AR_BUILD_GRADLE=$(find /home/runner/.pub-cache -name "build.gradle" | grep "ar_flutter_plugin" | head -n 1)
+          if [ -f "$AR_BUILD_GRADLE" ]; then
+            echo "Found plugin at $AR_BUILD_GRADLE, patching now..."
+            
+            # إضافة namespace
+            sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_BUILD_GRADLE"
+            
+            # استبدال أي إشارة لـ 1.8 أو 11 بـ 17 بشكل مباشر وجذري
+            sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$AR_BUILD_GRADLE"
+            sed -i 's/JavaVersion.VERSION_11/JavaVersion.VERSION_17/g' "$AR_BUILD_GRADLE"
+            sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' "$AR_BUILD_GRADLE"
+            sed -i 's/jvmTarget = "11"/jvmTarget = "17"/g' "$AR_BUILD_GRADLE"
+            sed -i 's/jvmTarget = '\''1.8'\''/jvmTarget = '\''17'\''/g' "$AR_BUILD_GRADLE"
+            sed -i 's/jvmTarget = '\''11'\''/jvmTarget = '\''17'\''/g' "$AR_BUILD_GRADLE"
+            
+            echo "--- Modified build.gradle content ---"
+            cat "$AR_BUILD_GRADLE"
           fi
 
-      # 4. توحيد توافقية Java و Kotlin باستخدام compilerOptions القياسية الحديثة
-      - name: Force Java 17 Compatibility using CompilerOptions
-        run: |
-          cat << 'EOF' >> android/app/build.gradle.kts
-
-          subprojects {
-              tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-                  compilerOptions {
-                      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-                  }
-              }
-              tasks.withType<JavaCompile>().configureEach {
-                  sourceCompatibility = JavaVersion.VERSION_17.toString()
-                  targetCompatibility = JavaVersion.VERSION_17.toString()
-              }
-          }
-          EOF
-
-      # 5. البناء الأساسي للتطبيق
+      # 3. بناء الـ APK
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
 
