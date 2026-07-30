@@ -17,49 +17,53 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # استخدام Java 11 لضمان التوافق التام مع مكتبة AR
+      # 1. تثبيت Java 17 إجباري كرمال Android Gradle Plugin
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      # إنشاء المجلد المفقود لضمان عدم توقف البناء
+      # 2. التأكد من المجلد المفقود
       - name: Ensure missing asset directory exists
         run: mkdir -p assets/images/search
 
       - name: Get dependencies
         run: flutter pub get
 
-      # إصلاح الـ Namespace وتوافقية Java/Kotlin لمكتبة ar_flutter_plugin
-      - name: Fix ar_flutter_plugin compatibility issues
+      # 3. إضافة الـ namespace لمكتبة ar_flutter_plugin
+      - name: Fix ar_flutter_plugin namespace
         run: |
           AR_PLUGIN_PATH=$(find /home/runner/.pub-cache -name "ar_flutter_plugin-*" -type d | head -n 1)
           if [ -d "$AR_PLUGIN_PATH" ]; then
-            echo "Fixing namespace and JVM options for $AR_PLUGIN_PATH"
-            # إضافة الـ namespace المطلوب
+            echo "Fixing namespace for $AR_PLUGIN_PATH"
             sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
-            
-            # توحيد jvmTarget لكود Kotlin ليكون 11
-            sed -i 's/jvmTarget = .*/jvmTarget = "11"/g' "$AR_PLUGIN_PATH/android/build.gradle"
-            
-            # توحيد compileOptions للـ Java لتصبح 11
-            sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_11/g' "$AR_PLUGIN_PATH/android/build.gradle"
-            sed -i 's/JavaVersion.VERSION_17/JavaVersion.VERSION_11/g' "$AR_PLUGIN_PATH/android/build.gradle"
-            sed -i 's/1.8/11/g' "$AR_PLUGIN_PATH/android/build.gradle"
           fi
 
-      # ضبط jvmTarget بـ gradle.properties الخاص بالمشروع
-      - name: Configure Gradle Properties
+      # 4. إجبار كافة مهام الـ Kotlin والـ Java بكل المشروع والمكتبات إنها تلتزم بـ Java 17
+      - name: Force Java 17 Compatibility in Gradle
         run: |
-          echo "android.kotlin.jvm.target=11" >> android/gradle.properties
+          cat << 'EOF' >> android/app/build.gradle.kts
+          
+          subprojects {
+              tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+                  kotlinOptions {
+                      jvmTarget = "17"
+                  }
+              }
+              tasks.withType<JavaCompile>().configureEach {
+                  sourceCompatibility = JavaVersion.VERSION_17.toString()
+                  targetCompatibility = JavaVersion.VERSION_17.toString()
+              }
+          }
+          EOF
 
-      # البناء الأساسي للتطبيق
+      # 5. البناء الأساسي
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
 
