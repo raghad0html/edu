@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. تثبيت Java 17 إجباري كرمال Android Gradle Plugin
+      # 1. تثبيت Java 17
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
@@ -29,7 +29,7 @@ jobs:
         with:
           channel: 'stable'
 
-      # 2. التأكد من المجلد المفقود
+      # 2. إنشاء المجلد المفقود لضمان عدم توقف البناء
       - name: Ensure missing asset directory exists
         run: mkdir -p assets/images/search
 
@@ -45,15 +45,15 @@ jobs:
             sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
           fi
 
-      # 4. إجبار كافة مهام الـ Kotlin والـ Java بكل المشروع والمكتبات إنها تلتزم بـ Java 17
-      - name: Force Java 17 Compatibility in Gradle
+      # 4. توحيد توافقية Java و Kotlin باستخدام compilerOptions القياسية الحديثة
+      - name: Force Java 17 Compatibility using CompilerOptions
         run: |
           cat << 'EOF' >> android/app/build.gradle.kts
-          
+
           subprojects {
               tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-                  kotlinOptions {
-                      jvmTarget = "17"
+                  compilerOptions {
+                      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
                   }
               }
               tasks.withType<JavaCompile>().configureEach {
@@ -63,7 +63,7 @@ jobs:
           }
           EOF
 
-      # 5. البناء الأساسي
+      # 5. البناء الأساسي للتطبيق
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
 
