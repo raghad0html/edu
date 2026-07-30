@@ -35,7 +35,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # إصلاح مشكلة الـ Namespace وتوافقية Java/Kotlin لمكتبة ar_flutter_plugin
+      # إصلاح الـ Namespace والـ JVM Target لمكتبة ar_flutter_plugin
       - name: Fix ar_flutter_plugin compatibility issues
         run: |
           AR_PLUGIN_PATH=$(find /home/runner/.pub-cache -name "ar_flutter_plugin-*" -type d | head -n 1)
@@ -43,14 +43,22 @@ jobs:
             echo "Fixing namespace and JVM options for $AR_PLUGIN_PATH"
             # إضافة namespace للمكتبة
             sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
-            # توحيد jvmTarget إلى 17 في كود الخصائص
+            # توحيد compileOptions للـ Java لتكون 17
+            sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$AR_PLUGIN_PATH/android/build.gradle"
+            sed -i 's/JavaVersion.VERSION_11/JavaVersion.VERSION_17/g' "$AR_PLUGIN_PATH/android/build.gradle"
+            # توحيد jvmTarget للـ Kotlin لتكون 17
             sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' "$AR_PLUGIN_PATH/android/build.gradle"
             sed -i 's/jvmTarget = "11"/jvmTarget = "17"/g' "$AR_PLUGIN_PATH/android/build.gradle"
           fi
 
-      # بناء التطبيق مع إجبار Gradle على اختيار Java 17 لكافة مهام Kotlin و Java
+      # إضافة خاصية jvmTarget=17 إلى gradle.properties الخاص بالمشروع
+      - name: Configure Gradle Properties
+        run: |
+          echo "android.kotlin.jvm.target=17" >> android/gradle.properties
+
+      # البناء بأمر flutter القياسي والمستقر
       - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons --extra-front-end-options="" -- -Pandroid.kotlin.jvm.target=17 -Porg.gradle.java.installations.auto-detect=false
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
