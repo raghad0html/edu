@@ -1,0 +1,184 @@
+{
+  "steps": {
+    "start": {
+      "question": "مرحباً بك في نظام الدعم الفني الذكي. اختر القسم الذي تواجه فيه مشكلة:",
+      "options": [
+        { "text": "الألياف الضوئية (FTTH)", "next": "fiber_root" },
+        { "text": "إعدادات الراوتر والبرمجة", "next": "router_root" },
+        { "text": "جودة الواي فاي والسرعة", "next": "wifi_root" }
+      ]
+    },
+
+    "fiber_root": {
+      "question": "تفقد جهاز الـ ONT (مودم الفايبر)، ما هو وضع لمبة LOS؟",
+      "options": [
+        { "text": "حمراء ثابتة", "next": "fiber_los_red_fixed_1" },
+        { "text": "حمراء تومض (Blinking)", "next": "fiber_los_red_blink_1" },
+        { "text": "مطفأة تماماً", "next": "fiber_pon_check_1" }
+      ]
+    },
+    "fiber_los_red_fixed_1": { "question": "هل الكابل الأصفر (Patch Cord) موصول بإحكام في المنفذ السفلي؟", "options": [{ "text": "نعم، موصول", "next": "fiber_check_physical_damage_1" }, { "text": "أعدت توصيله الآن", "next": "fiber_recheck_status_1" }] },
+    "fiber_recheck_status_1": { "question": "التشخيص:", "final": "بعد إعادة التوصيل، انتظر 30 ثانية. إذا بقيت اللمبة حمراء ثابتة، فالكابل أو المنفذ تالف. اتصل بالدعم." },
+    "fiber_check_physical_damage_1": { "question": "افحص الكابل الأصفر، هل تلاحظ انثناءً حاداً أو كسر في الزجاج الداخلي؟", "options": [{ "text": "يوجد انثناء حاد", "next": "fiber_bend_solution_1" }, { "text": "الكابل سليم ظاهرياً", "next": "fiber_wall_socket_check_1" }] },
+    "fiber_bend_solution_1": { "question": "التشخيص:", "final": "انثناء كابل الفايبر يمنع مرور الضوء. قم بفرد الكابل بشكل دائري بقطر لا يقل عن 5 سم. إذا استمرت اللمبة الحمراء، يجب استبدال الكابل." },
+    "fiber_wall_socket_check_1": { "question": "هل المقبس الجداري (العلبة البيضاء) مثبتة بإحكام أم سقطت؟", "options": [{ "text": "سقطت أو تحركت", "next": "fiber_wall_fix_1" }, { "text": "مثبتة بشكل جيد", "next": "fiber_isp_service_check_1" }] },
+    "fiber_wall_fix_1": { "question": "التشخيص:", "final": "أعد تثبيت المقبس الجداري. إذا لم يتحسن الوضع، هناك قطع في الكابل الداخلي. يلزم زيارة فني." },
+    "fiber_isp_service_check_1": { "question": "التشخيص:", "final": "المشكلة غالباً انقطاع في الكابل الخارجي أو في الكابينة الرئيسية. يرجى الاتصال بالدعم الفني لرفع تذكرة صيانة ميدانية." },
+
+    "fiber_los_red_blink_1": { "question": "لمبة LOS تومض بسرعة أم ببطء؟", "options": [{ "text": "تومض بسرعة", "next": "fiber_fast_blink" }, { "text": "تومض ببطء", "next": "fiber_slow_blink" }] },
+    "fiber_fast_blink": { "question": "التشخيص:", "final": "تومض سريعاً يعني فقدان الإشارة بشكل متقطع. افحص جميع الوصلات، ونظف طرف الكابل الأصفر بقطعة قماش جافة." },
+    "fiber_slow_blink": { "question": "التشخيص:", "final": "تومض بطيء يعني مشكلة في مزامنة OLT. اتصل بالمزود لإعادة تفعيل المنفذ." },
+
+    "fiber_pon_check_1": { "question": "لمبة PON: هل هي خضراء ثابتة أم تومض؟", "options": [{ "text": "خضراء ثابتة", "next": "fiber_pon_green_fixed" }, { "text": "تومض أخضر", "next": "fiber_pon_blinking" }, { "text": "مطفأة", "next": "fiber_pon_off" }] },
+    "fiber_pon_green_fixed": { "question": "التشخيص:", "final": "الإشارة مثالية. المشكلة في الراوتر أو الكابلات الداخلية. أعد تشغيل الجهازين." },
+    "fiber_pon_blinking": { "question": "التشخيص:", "final": "الـ ONT يحاول التسجيل على الشبكة. انتظر 3 دقائق، فإن لم تصبح ثابتة، اتصل بالدعم." },
+    "fiber_pon_off": { "question": "التشخيص:", "final": "الـ ONT لا يستقبل ضوء من منفذ الفايبر. قد يكون الكابل مقطوعاً أو المنفذ معطلاً." },
+
+    "fiber_los_red_fixed_2": { "question": "هل الكابل الأصفر موصول في منفذ OPTICAL؟", "options": [{ "text": "نعم", "next": "fiber_clean_connector" }, { "text": "لا", "next": "fiber_plug_optical" }] },
+    "fiber_plug_optical": { "question": "التشخيص:", "final": "قم بتوصيل الكابل في المنفذ المسمى OPTICAL أو PON وليس Ethernet." },
+    "fiber_clean_connector": { "question": "التشخيص:", "final": "نظف رأس الموصل البلاستيكي بلطف باستخدام قطنة وكحول إيزوبروبيل ثم جففه." },
+
+    "fiber_los_red_fixed_3": { "question": "هل حدث انقطاع كهرباء قبل المشكلة؟", "options": [{ "text": "نعم", "next": "fiber_power_surge" }, { "text": "لا", "next": "fiber_isp_service_check_2" }] },
+    "fiber_power_surge": { "question": "التشخيص:", "final": "تمدد التيار قد أتلف الـ ONT. جرب منفذ طاقة آخر، فإن لم يعمل، يحتاج الجهاز استبدالاً." },
+    "fiber_isp_service_check_2": { "question": "التشخيص:", "final": "تحقق من عدم وجود أعمال حفر أو بناء في الشارع قد قطعت الكابل الرئيسي." },
+
+    "fiber_root_var2": { "question": "هل الإنترنت يعمل عبر كابل Ethernet مباشر من الـ ONT؟", "options": [{ "text": "نعم يعمل", "next": "fiber_router_fault" }, { "text": "لا يعمل", "next": "fiber_ont_fault" }] },
+    "fiber_router_fault": { "question": "التشخيص:", "final": "المشكلة في الراوتر الخاص بك. جرب إعادة ضبطه أو استبداله." },
+    "fiber_ont_fault": { "question": "التشخيص:", "final": "الـ ONT معطل. اتصل بالشركة لاستبداله." },
+
+    "fiber_root_var3": { "question": "هل جميع الأضواء (PWR, PON, LOS) مطفأة؟", "options": [{ "text": "نعم", "next": "fiber_no_power" }, { "text": "PWR فقط مطفأة", "next": "fiber_adapter_fault" }] },
+    "fiber_no_power": { "question": "التشخيص:", "final": "لا طاقة للجهاز. تأكد من مخرج الكهرباء والقابس. جرب شاحناً آخر بنفس الفولتية." },
+    "fiber_adapter_fault": { "question": "التشخيص:", "final": "محول الطاقة تالف. استبدله بمحول 12V 1A – 2A مناسب." },
+
+    "fiber_root_var4": { "question": "هل سمعت صوت طقطقة من المقبس الجداري؟", "options": [{ "text": "نعم", "next": "fiber_short_circuit_light" }, { "text": "لا", "next": "fiber_isp_service_check_3" }] },
+    "fiber_short_circuit_light": { "question": "التشخيص:", "final": "احتمال تماس كهربائي أو كسر في الفايبر الداخلي. لا تحاول الإصلاح بنفسك - اتصل بالفني فوراً." },
+    "fiber_isp_service_check_3": { "question": "التشخيص:", "final": "مشكلة في الشبكة الخارجية. أرسل رسالة نصية للدعم مع صورة لمبة LOS الحمراء." },
+
+    "fiber_root_var5": { "question": "هل تعرض الكابل الأصفر لضغط (مثل باب أو أثاث)؟", "options": [{ "text": "نعم", "next": "fiber_crushed" }, { "text": "لا", "next": "fiber_ont_restart" }] },
+    "fiber_crushed": { "question": "التشخيص:", "final": "الكابل مسحوق داخلياً. يحتاج استبدالاً كاملاً من المقبس الجداري للـ ONT." },
+    "fiber_ont_restart": { "question": "التشخيص:", "final": "أعد تشغيل الـ ONT لمدة دقيقتين. إذا بقيت LOS حمراء، المشكلة خارجية." },
+
+    "fiber_root_var6": { "question": "هل جيرانك يعانون من نفس المشكلة؟", "options": [{ "text": "نعم", "next": "fiber_area_outage" }, { "text": "لا أعرف", "next": "fiber_individual_case" }] },
+    "fiber_area_outage": { "question": "التشخيص:", "final": "انقطاع عام في المنطقة. يرجى التواصل مع المزود لمعرفة وقت الإصلاح." },
+    "fiber_individual_case": { "question": "التشخيص:", "final": "مشكلة فردية. افحص المقبس الجداري، فإن كان سليماً فالكابل الخارجي مقطوع." },
+
+    "fiber_root_var7": { "question": "هل قمت بتغيير مكان الراوتر مؤخراً؟", "options": [{ "text": "نعم", "next": "fiber_cable_bent" }, { "text": "لا", "next": "fiber_check_socket_wall" }] },
+    "fiber_cable_bent": { "question": "التشخيص:", "final": "تأكد أن كابل الفايبر لم ينثني بزاوية 90 درجة. انثناء حاد = فقدان الإشارة." },
+    "fiber_check_socket_wall": { "question": "التشخيص:", "final": "افتح العلبة الجدارية برفق، هل ترى كسر في السلك الأبيض الداخلي؟ إذا نعم، يحتاج فني." },
+
+    "fiber_root_var8": { "question": "هل كانت هناك عاصفة رعدية؟", "options": [{ "text": "نعم", "next": "fiber_thunder_damage" }, { "text": "لا", "next": "fiber_standard_check" }] },
+    "fiber_thunder_damage": { "question": "التشخيص:", "final": "الصواعق قد تحرق الـ ONT حتى لو كان محمياً. جرب جهازاً آخر إن أمكن." },
+    "fiber_standard_check": { "question": "التشخيص:", "final": "قم بإجراء اختبار ping على 8.8.8.8 من جهاز متصل بالسلك للتأكد." },
+
+    "fiber_root_var9": { "question": "هل أجرى فني عمليات صيانة في العمارة قبل 24 ساعة؟", "options": [{ "text": "نعم", "next": "fiber_splicing_issue" }, { "text": "لا", "next": "fiber_los_troubleshoot" }] },
+    "fiber_splicing_issue": { "question": "التشخيص:", "final": "قد يكون اللحام (splicing) سيئاً بعد الصيانة. أبلغ الدعم بإعادة فحص الوصلة." },
+    "fiber_los_troubleshoot": { "question": "التشخيص:", "final": "جرب توصيل ONT آخر من صديق للتأكد من سلامة الكابل الخارجي." },
+
+    "fiber_root_var10": { "question": "هل الـ ONT ساخن جداً عند اللمس؟", "options": [{ "text": "نعم", "next": "fiber_overheat" }, { "text": "طبيعي", "next": "fiber_cool_restart" }] },
+    "fiber_overheat": { "question": "التشخيص:", "final": "ارتفاع الحرارة يسبب أعطالاً في الاستقبال البصري. أطفئ الجهاز 30 دقيقة ثم جرب." },
+    "fiber_cool_restart": { "question": "التشخيص:", "final": "أعد التشغيل مرة أخرى. بعض الأجهزة تحتاج إعادة تشغيل دورية." },
+
+    "router_root": {
+      "question": "مشاكل الوصول والبرمجة، ماذا تواجه؟",
+      "options": [
+        { "text": "نسيت كلمة سر الـ Admin", "next": "router_reset_logic_1" },
+        { "text": "خطأ في بيانات الـ PPPoE", "next": "router_auth_error_1" },
+        { "text": "لا يمكنني فتح 192.168.1.1", "next": "router_access_denied_1" }
+      ]
+    },
+    "router_reset_logic_1": { "question": "هل قمت بعمل Reset؟", "options": [{ "text": "نعم", "next": "router_reconfig_guide_1" }, { "text": "لا، أريد الطريقة", "next": "router_reset_method_1" }] },
+    "router_reset_method_1": { "question": "التشخيص:", "final": "اضغط على زر Reset في الثقب الخلفي لمدة 10 ثوانٍ باستخدام مشبك ورق. ستومض الأضواء، ثم عُد للإعدادات من الصفر." },
+    "router_reconfig_guide_1": { "question": "بعد الـ Reset، هل أدخلت اسم المستخدم وكلمة المرور الخاصة بالخدمة؟", "options": [{ "text": "لا، كيف؟", "next": "router_pppoe_setup_steps_1" }, { "text": "نعم، ولم يعمل", "next": "router_vlan_check_1" }] },
+    "router_pppoe_setup_steps_1": { "question": "التشخيص:", "final": "اذهب إلى WAN > اختر PPPoE > أدخل اسم المستخدم وكلمة السر (الموجودين في عقد الاشتراك). احفظ وانتظر 30 ثانية." },
+    "router_vlan_check_1": { "question": "هل قمت بتفعيل خيار الـ VLAN وتحديد المعرف (ID) الصحيح؟", "options": [{ "text": "ما هو الـ VLAN؟", "next": "router_vlan_info_1" }, { "text": "نعم، المعرف صحيح", "next": "router_final_reboot_1" }] },
+    "router_vlan_info_1": { "question": "الحل التقني:", "final": "خدمة الفايبر تتطلب معرف VLAN (مثل 10 أو 100 حسب المزود). بدون هذا الرقم، لن تعمل الخدمة حتى لو كانت البيانات صحيحة." },
+    "router_final_reboot_1": { "question": "التشخيص:", "final": "أعد تشغيل الراوتر والـ ONT معاً. إذا استمرت المشكلة، اتصل بالدعم للتأكد من تفعيل الخدمة من طرفهم." },
+
+    "router_auth_error_1": { "question": "هل تأكدت من أن بيانات PPPoE صحيحة (حساسة للأحرف الكبيرة والصغيرة)؟", "options": [{ "text": "نعم", "next": "router_redial_period" }, { "text": "ربما خطأ مطبعي", "next": "router_check_contract" }] },
+    "router_check_contract": { "question": "التشخيص:", "final": "راجع العقد أو رسالة التفعيل. انسخ البيانات بدقة، وتجنب المسافات." },
+    "router_redial_period": { "question": "التشخيص:", "final": "بعض المزودين يطلبون تعيين فترة إعادة الاتصال (Redial period) إلى 30 ثانية بدلاً من Always on." },
+
+    "router_access_denied_1": { "question": "هل جربت العناوين 192.168.0.1 أو 192.168.100.1؟", "options": [{ "text": "نعم ولم تفتح", "next": "router_check_ipconfig" }, { "text": "لا، سأجرب", "next": "router_alternate_ip" }] },
+    "router_alternate_ip": { "question": "التشخيص:", "final": "حاول 192.168.1.1 أو 192.168.0.1 أو 10.0.0.1. اقرأ الملصق أسفل الراوتر." },
+    "router_check_ipconfig": { "question": "التشخيص:", "final": "افتح موجه الأوامر واكتب ipconfig. البوابة الافتراضية هي عنوان الراوتر." },
+
+    "router_reset_logic_2": { "question": "هل تريد الاحتفاظ بالإعدادات (configuration backup) قبل الـ Reset؟", "options": [{ "text": "نعم", "next": "router_backup_guide" }, { "text": "لا، امسح كل شيء", "next": "router_hard_reset" }] },
+    "router_backup_guide": { "question": "التشخيص:", "final": "ادخل إلى Administration > Backup Settings، احفظ الملف. بعد الـ Reset، استعد الملف." },
+    "router_hard_reset": { "question": "التشخيص:", "final": "اضغط Reset لمدة 30 ثانية (طريقة 30-30-30 لبعض الأجهزة) لعمل مسح كامل." },
+
+    "router_auth_error_2": { "question": "هل حسابك مسدد أم منتهي؟", "options": [{ "text": "منتهي", "next": "router_payment_due" }, { "text": "مسدد", "next": "router_mac_cloning" }] },
+    "router_payment_due": { "question": "التشخيص:", "final": "المزود قد يوقف الخدمة تلقائياً لعدم السداد. قم بالدفع واتصل بهم لإعادة التفعيل." },
+    "router_mac_cloning": { "question": "التشخيص:", "final": "بعض الشركات تربط الخدمة بـ MAC address سابق. ابحث عن خيار MAC Clone في واجهة الراوتر وانسخ MAC الجهاز القديم." },
+
+    "router_vlan_check_2": { "question": "هل تعرف رقم VLAN لمزود الخدمة؟", "options": [{ "text": "لا", "next": "router_vlan_help" }, { "text": "نعم 101", "next": "router_apply_vlan" }] },
+    "router_vlan_help": { "question": "التشخيص:", "final": "عادةً: WE Telecom (10), Vodafone (100), Orange (101), Etisalat (21). اتصل بالدعم للتأكيد." },
+    "router_apply_vlan": { "question": "التشخيص:", "final": "في إعدادات WAN، فعّل VLAN ID وأدخل الرقم، ثم احفظ وأعد التشغيل." },
+
+    "router_root_var2": { "question": "هل الإنترنت يقطع كل بضع دقائق؟", "options": [{ "text": "نعم", "next": "router_keepalive" }, { "text": "لا", "next": "router_stable_issue" }] },
+    "router_keepalive": { "question": "التشخيص:", "final": "فعّل LCP Echo Failure (3) و LCP Echo Interval (10) في إعدادات PPPoE لتثبيت الاتصال." },
+    "router_stable_issue": { "question": "التشخيص:", "final": "غيّر كابل Ethernet بين الـ ONT والراوتر. كابل تالف يسبب أخطاء في المصادقة." },
+
+    "router_root_var3": { "question": "هل نسيت كلمة مرور الواي فاي وليس admin؟", "options": [{ "text": "صحيح، wpa key نسيتها", "next": "router_show_wifi_password" }, { "text": "لا، admin نسيتها", "next": "router_reset_logic_1" }] },
+    "router_show_wifi_password": { "question": "التشخيص:", "final": "ادخل إلى الإعدادات (admin/admin) ثم Wireless > Security، سترى كلمة المرور أو غيرها." },
+
+    "router_root_var4": { "question": "الراوتر يعمل لكن بعض المواقع لا تفتح؟", "options": [{ "text": "نعم (مثل فيسبوك)", "next": "router_dns_change" }, { "text": "كل المواقع لا تفتح", "next": "router_gateway_check" }] },
+    "router_dns_change": { "question": "التشخيص:", "final": "غيّر DNS إلى 8.8.8.8 و 1.1.1.1 في إعدادات الراوتر لتجاوز حظر المزود." },
+    "router_gateway_check": { "question": "التشخيص:", "final": "افحص إذا كان الـ ONT يعطي عنوان IP صحيح للراوتر. قد تحتاج إعادة تشغيل الطرفين." },
+
+    "router_root_var5": { "question": "هل يظهر خطأ 691 (مستخدم/كلمة مرور خاطئة) رغم صحتها؟", "options": [{ "text": "نعم", "next": "router_691_fix" }, { "text": "لا", "next": "router_other_error" }] },
+    "router_691_fix": { "question": "التشخيص:", "final": "اتصل بالمزود ليقطع الجلسة النشطة من طرفهم (session hanging)، ثم أعد الاتصال." },
+    "router_other_error": { "question": "التشخيص:", "final": "جرب إنشاء اتصال PPPoE جديد من جهاز كمبيوتر (بدون راوتر) لعزل المشكلة." },
+
+    "wifi_root": {
+      "question": "مشاكل الواي فاي، اختر الحالة:",
+      "options": [
+        { "text": "الإنترنت بطيء جداً", "next": "wifi_slow_check_1" },
+        { "text": "الشبكة تختفي وتظهر", "next": "wifi_unstable_1" },
+        { "text": "لا يمكنني الاتصال بالـ 5GHz", "next": "wifi_5g_incompatibility_1" }
+      ]
+    },
+    "wifi_slow_check_1": { "question": "هل البطء على جهاز واحد أم جميع الأجهزة؟", "options": [{ "text": "جهاز واحد فقط", "next": "wifi_device_isolation_1" }, { "text": "كل المنزل", "next": "wifi_congestion_analysis_1" }] },
+    "wifi_device_isolation_1": { "question": "التشخيص:", "final": "انسَ الشبكة من هذا الجهاز وأعد الاتصال. بعض الهواتف تعلق على قناة مزدحمة." },
+    "wifi_congestion_analysis_1": { "question": "كم عدد الأجهزة المتصلة حالياً بالراوتر؟", "options": [{ "text": "أكثر من 10 أجهزة", "next": "wifi_overload_solution_1" }, { "text": "أقل من 5 أجهزة", "next": "wifi_interference_check_1" }] },
+    "wifi_overload_solution_1": { "question": "التشخيص:", "final": "الراوتر لا يتحمل هذا العدد. ارفع عدد الأجهزة المسموح بها في الإعدادات، أو استخدم Access Points إضافية." },
+    "wifi_interference_check_1": { "question": "هل الراوتر موضوع خلف التلفاز أو داخل خزانة خشبية؟", "options": [{ "text": "نعم، في مكان مغلق", "next": "wifi_location_fix_1" }, { "text": "في مكان مفتوح", "next": "wifi_channel_fix_1" }] },
+    "wifi_location_fix_1": { "question": "نصيحة الخبير:", "final": "الخشب والزجاج والمعادن تمتص إشارة الواي فاي. ضع الراوتر في منطقة مرتفعة ومفتوحة في وسط المنزل لزيادة التغطية بنسبة 40%." },
+    "wifi_channel_fix_1": { "question": "الحل التقني:", "final": "غير القناة من Auto إلى 6 أو 11 لتردد 2.4GHz لتقليل التداخل مع الجيران." },
+
+    "wifi_unstable_1": { "question": "هل الشبكة تختفي عند الابتعاد عن الراوتر؟", "options": [{ "text": "نعم", "next": "wifi_range_extender" }, { "text": "حتى بالقرب منه", "next": "wifi_firmware_update" }] },
+    "wifi_range_extender": { "question": "التشخيص:", "final": "ضع مكرر إشارة (Repeater) في منتصف المسافة، أو حوّل الراوتر إلى وضع الـ Access Point إن أمكن." },
+    "wifi_firmware_update": { "question": "التشخيص:", "final": "حدث firmware الراوتر. مشاكل عدم الاستقرار غالباً تحل بتحديث البرامج الثابتة." },
+
+    "wifi_5g_incompatibility_1": { "question": "هل جهازك يدعم تقنية AC أو AX (Wi-Fi 5/6)؟", "options": [{ "text": "نعم يدعم", "next": "wifi_5g_split_logic_1" }, { "text": "لا أعلم", "next": "wifi_device_specs_check_1" }] },
+    "wifi_5g_split_logic_1": { "question": "الحل المقترح:", "final": "افصل ترددي 2.4 و 5GHz بأسماء مختلفة. اتصل بـ5GHz للألعاب والبث، و2.4GHz للتصفح العادي." },
+    "wifi_device_specs_check_1": { "question": "التشخيص:", "final": "معظم الأجهزة القديمة (قبل 2013) لا تدعم 5GHz. استخدم 2.4GHz فقط لهذا الجهاز." },
+
+    "wifi_slow_check_2": { "question": "هل السرعة بطيئة حتى على كابل Ethernet؟", "options": [{ "text": "لا، فقط وايفاي", "next": "wifi_bandwidth_steering" }, { "text": "نفس البطء", "next": "wifi_isp_speed_issue" }] },
+    "wifi_bandwidth_steering": { "question": "التشخيص:", "final": "بسبب Band Steering يجبر الأجهزة على 5GHz البعيد. عطّل Band Steering في الإعدادات." },
+    "wifi_isp_speed_issue": { "question": "التشخيص:", "final": "اختبر السرعة عبر سلك. إذا كانت أقل من المتفق عليه، اتصل بمزود الخدمة." },
+
+    "wifi_interference_check_2": { "question": "هل هناك ميكروويف أو سماعات لاسلكية بالقرب؟", "options": [{ "text": "نعم", "next": "wifi_microwave_interfere" }, { "text": "لا", "next": "wifi_neighbor_interfere" }] },
+    "wifi_microwave_interfere": { "question": "التشخيص:", "final": "الميكروويف يعطل 2.4GHz بشدة. أبعد الراوتر عن المطبخ أو استخدم 5GHz." },
+    "wifi_neighbor_interfere": { "question": "التشخيص:", "final": "حمّل تطبيق WiFi Analyzer، شوف القناة الأقل ازدحاماً وغيرها يدوياً." },
+
+    "wifi_unstable_2": { "question": "هل الراوتر قديم (أكثر من 3 سنوات)؟", "options": [{ "text": "نعم", "next": "wifi_router_aging" }, { "text": "لا", "next": "wifi_reset_router" }] },
+    "wifi_router_aging": { "question": "التشخيص:", "final": "الأجهزة القديمة تفقد الاستقرار. يفضل شراء راوتر حديث (Wi-Fi 6) لمنزل مليء بالأجهزة." },
+    "wifi_reset_router": { "question": "التشخيص:", "final": "أعد ضبط الراوتر مصنعاً. أحياناً جدول التوجيه يفسد بعد شهور." },
+
+    "wifi_5g_incompatibility_2": { "question": "هل اسم شبكة الـ5GHz يظهر في القائمة؟", "options": [{ "text": "لا يظهر", "next": "wifi_5g_disabled" }, { "text": "يظهر لكن لا يتصل", "next": "wifi_5g_auth_fail" }] },
+    "wifi_5g_disabled": { "question": "التشخيص:", "final": "فعّل الـ5GHz من إعدادات الراوتر (Wireless > Enable 5GHz). غيّر القناة إلى 36 أو 40." },
+    "wifi_5g_auth_fail": { "question": "التشخيص:", "final": "غيّر طريقة التشفير إلى WPA2-PSK فقط، وليس WPA/WPA2 مختلطاً، للأجهزة القديمة." },
+
+    "wifi_slow_check_3": { "question": "هل تستخدم VPN؟", "options": [{ "text": "نعم", "next": "wifi_vpn_slow" }, { "text": "لا", "next": "wifi_qos_check" }] },
+    "wifi_vpn_slow": { "question": "التشخيص:", "final": "VPN يخفض السرعة. جرب بروتوكول WireGuard بدل OpenVPN، أو عطله مؤقتاً." },
+    "wifi_qos_check": { "question": "التشخيص:", "final": "عطّل QoS (جودة الخدمة) في الراوتر، أحياناً يحد السرقة بشكل خاطئ." },
+
+    "wifi_unstable_3": { "question": "هل توجد كاميرات مراقبة لاسلكية؟", "options": [{ "text": "نعم", "next": "wifi_camera_interference" }, { "text": "لا", "next": "wifi_poe_conflict" }] },
+    "wifi_camera_interference": { "question": "التشخيص:", "final": "كاميرات 2.4GHz تزاحم الشبكة. انقل الكاميرات إلى 5GHz أو استخدم كابلات." },
+    "wifi_poe_conflict": { "question": "التشخيص:", "final": "بعض أجهزة PoE تسبب ضوضاء كهرومغناطيسية. أبعد كابلات الطاقة عن الراوتر." },
+
+    "wifi_slow_check_4": { "question": "هل البطء في أوقات محددة (المساء)؟", "options": [{ "text": "نعم", "next": "wifi_peak_hours" }, { "text": "عشوائياً", "next": "wifi_packet_loss" }] },
+    "wifi_peak_hours": { "question": "التشخيص:", "final": "ازدحام. الراوتر لا يستخدم تقنية MU-MIMO. اشتري راوتراً يدعمها." },
+    "wifi_packet_loss": { "question": "التشخيص:", "final": "ارتفاع packet loss بسبب كابل Ethernet تالف بين الراوتر والـ ONT. استبدله." }
+  }
+}
