@@ -28,29 +28,29 @@ jobs:
         with:
           channel: 'stable'
 
-      # حل مشكلة المجلد المفقود في pubspec.yaml
+      # التأكد من وجود مجلد الصور المفقود
       - name: Ensure missing asset directory exists
         run: mkdir -p assets/images/search
 
       - name: Get dependencies
         run: flutter pub get
 
-      # حل مشكلتي الـ Namespace والـ JVM Target لمكتبة ar_flutter_plugin
+      # إصلاح مشكلة الـ Namespace وتوافقية Java/Kotlin لمكتبة ar_flutter_plugin
       - name: Fix ar_flutter_plugin compatibility issues
         run: |
           AR_PLUGIN_PATH=$(find /home/runner/.pub-cache -name "ar_flutter_plugin-*" -type d | head -n 1)
           if [ -d "$AR_PLUGIN_PATH" ]; then
-            echo "Fixing namespace and JVM target for $AR_PLUGIN_PATH"
-            # إضافة namespace
+            echo "Fixing namespace and JVM options for $AR_PLUGIN_PATH"
+            # إضافة namespace للمكتبة
             sed -i '/android {/a \    namespace "com.alex.ar_flutter_plugin"' "$AR_PLUGIN_PATH/android/build.gradle"
-            # ضبط jvmTarget إلى 1.8 لتطابق Java
-            sed -i 's/jvmTarget = "17"/jvmTarget = "1.8"/g' "$AR_PLUGIN_PATH/android/build.gradle"
-            sed -i 's/jvmTarget = "11"/jvmTarget = "1.8"/g' "$AR_PLUGIN_PATH/android/build.gradle"
-            sed -i '/android {/a \    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }' "$AR_PLUGIN_PATH/android/build.gradle"
+            # توحيد jvmTarget إلى 17 في كود الخصائص
+            sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' "$AR_PLUGIN_PATH/android/build.gradle"
+            sed -i 's/jvmTarget = "11"/jvmTarget = "17"/g' "$AR_PLUGIN_PATH/android/build.gradle"
           fi
 
+      # بناء التطبيق مع إجبار Gradle على اختيار Java 17 لكافة مهام Kotlin و Java
       - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release --no-tree-shake-icons --extra-front-end-options="" -- -Pandroid.kotlin.jvm.target=17 -Porg.gradle.java.installations.auto-detect=false
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
